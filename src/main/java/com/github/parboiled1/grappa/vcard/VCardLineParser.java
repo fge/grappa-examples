@@ -9,10 +9,8 @@ import org.parboiled.Rule;
 public class VCardLineParser
     extends BaseParser<Object>
 {
-    Rule lineFold()
+    public Rule lineFold()
     {
-        return Sequence("\r\n", AnyOf(" \t"));
+        return sequence(crlf(), wsp());
     }
-
-
 }
