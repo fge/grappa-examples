@@ -38,12 +38,11 @@ repositories {
 
 dependencies {
     compile(group: "com.github.parboiled1", name: "grappa",
-        version: "1.0.0-beta.2");
+        version: "1.0.0-beta.9");
     compile(group: "com.googlecode.ez-vcard", name: "ez-vcard",
         version: "0.9.3");
     provided(group: "com.google.code.findbugs", name: "jsr305",
         version: "2.0.1");
-    compile(group: "com.google.guava", name: "guava", version: "17.0");
     testCompile(group: "org.testng", name: "testng", version: "6.8.7") {
         exclude(group: "junit", module: "junit");
         exclude(group: "org.beanshell", module: "bsh");
