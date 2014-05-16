@@ -14,7 +14,7 @@ public class VcardValueParser
     {
         final Rule special = quotedPrintable ? qpNextLine()
             : nonQpNextLine();
-        final Rule normal = oneOrMore(test(special), ANY);
+        final Rule normal = oneOrMore(testNot(special), ANY);
         sb.clear();
         return sequence(
             join(normal).using(special).min(1),
