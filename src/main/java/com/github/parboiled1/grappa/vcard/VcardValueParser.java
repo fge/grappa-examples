@@ -14,13 +14,12 @@ public class VcardValueParser
     {
         final Rule special = quotedPrintable ? qpNextLine()
             : nonQpNextLine();
-        final Rule normal = oneOrMore(testNot(special), ANY);
-        sb.clear();
-        return sequence(
-            join(normal).using(special).min(1),
-            sb.append(match())
-        );
+        final Rule normal
+            = oneOrMore(testNot(special), ANY, sb.append(match()));
 
+        sb.clear();
+        return
+            join(normal).using(special).min(1);
     }
 
     /*
