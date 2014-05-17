@@ -2,6 +2,7 @@ package com.github.parboiled1.grappa.vcard;
 
 import com.github.parboiled1.grappa.event.BasicMatchEvent;
 import org.parboiled.Context;
+import org.parboiled.support.ValueStack;
 
 public final class VcardValueEvent
     extends BasicMatchEvent<String>
@@ -11,7 +12,9 @@ public final class VcardValueEvent
     public VcardValueEvent(final Context<String> context)
     {
         super(context);
-        propertyName = context.getValueStack().pop();
+        final ValueStack<String> stack = context.getValueStack();
+        stack.pop();
+        propertyName = stack.pop();
     }
 
     public String getPropertyName()

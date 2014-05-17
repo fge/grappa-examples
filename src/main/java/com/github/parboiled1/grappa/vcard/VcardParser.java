@@ -11,6 +11,9 @@ import java.util.List;
 public class VcardParser
     extends EventBusParser<String>
 {
+    /*
+     * Can't be private: accessed in a Rule
+     */
     protected static final List<String> VCARD_VERSIONS;
 
     static {
@@ -25,11 +28,12 @@ public class VcardParser
     VcardParser()
     {
         addEvent("version", VcardVersionEvent.class);
+        addEvent("value", VcardValueEvent.class);
     }
 
-    private final VcardValueParser quotedPrintableValue
+    protected final VcardValueParser quotedPrintableValue
         = Parboiled.createParser(QuotedPrintableValueParser.class);
-    private final VcardValueParser regularValue
+    protected final VcardValueParser regularValue
         = Parboiled.createParser(RegularValueParser.class);
 
 
@@ -38,9 +42,34 @@ public class VcardParser
         return sequence("VERSION:", trie(VCARD_VERSIONS), fireEvent("version"));
     }
 
+    Rule property()
+    {
+        return sequence(
+            testNot(endVcard()),
+            oneOrMore(charRange('A', 'Z')), push(match()),
+            ':',
+            regularValue.value(), fireEvent("value")
+        );
+    }
+
     Rule vcard()
     {
-        return sequence("BEGIN:VCARD\r\n", version(), crlf(), "END:VCARD");
+        return sequence(
+            beginVcard(),
+            version(), crlf(),
+            oneOrMore(property()),
+            endVcard()
+        );
+    }
+
+    Rule beginVcard()
+    {
+        return string("BEGIN:VCARD\r\n");
+    }
+
+    Rule endVcard()
+    {
+        return string("END:VCARD");
     }
 }
 
