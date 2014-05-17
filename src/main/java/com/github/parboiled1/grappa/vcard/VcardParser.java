@@ -11,7 +11,7 @@ import java.util.List;
 public class VcardParser
     extends EventBusParser<String>
 {
-    private static final List<String> VCARD_VERSIONS;
+    protected static final List<String> VCARD_VERSIONS;
 
     static {
         final ImmutableList.Builder<String> builder = ImmutableList.builder();
@@ -36,6 +36,11 @@ public class VcardParser
     Rule version()
     {
         return sequence("VERSION:", trie(VCARD_VERSIONS), fireEvent("version"));
+    }
+
+    Rule vcard()
+    {
+        return sequence("BEGIN:VCARD\r\n", version(), crlf(), "END:VCARD");
     }
 }
 
