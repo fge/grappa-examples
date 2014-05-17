@@ -6,7 +6,7 @@ public class QuotedPrintableValueParser
     extends VcardValueParser
 {
     @Override
-    protected Rule normal()
+    protected Rule content()
     {
         return sequence(
             oneOrMore(noneOf("=\r\n")),

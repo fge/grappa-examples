@@ -6,7 +6,7 @@ public class RegularValueParser
     extends VcardValueParser
 {
     @Override
-    protected Rule normal()
+    protected Rule content()
     {
         return sequence(
             oneOrMore(testNot("\r\n"), ANY),

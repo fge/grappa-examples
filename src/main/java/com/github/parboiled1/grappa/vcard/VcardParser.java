@@ -71,5 +71,11 @@ public class VcardParser
     {
         return string("END:VCARD");
     }
+
+    Rule geoNumber()
+    {
+        // TODO: create a repeat(...).{times,min,max}()
+        return sequence(oneOrMore(digit()), '.', nTimes(6, digit()));
+    }
 }
 

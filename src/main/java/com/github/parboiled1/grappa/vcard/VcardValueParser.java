@@ -12,13 +12,13 @@ public abstract class VcardValueParser
     {
         return sequence(
             accumulator.clear(),
-            join(normal()).using(fold()).min(1),
+            join(content()).using(fold()).min(1),
             end(),
             push(accumulator.get())
         );
     }
 
-    protected abstract Rule normal();
+    protected abstract Rule content();
 
     protected abstract Rule fold();
 
