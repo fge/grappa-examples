@@ -3,6 +3,7 @@ package com.github.parboiled1.grappa.vcard;
 import com.google.common.eventbus.Subscribe;
 import ezvcard.VCard;
 import ezvcard.VCardVersion;
+import ezvcard.property.VCardProperty;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -20,5 +21,16 @@ public final class VcardListener
     public void setVersion(final VCardVersion version)
     {
         vCard.setVersion(version);
+    }
+
+    @Subscribe
+    public void addProperty(final VCardProperty property)
+    {
+        vCard.addProperty(property);
+    }
+
+    public VCard getvCard()
+    {
+        return vCard;
     }
 }

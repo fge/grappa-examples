@@ -14,8 +14,8 @@ public abstract class VcardValueParser
         return sequence(
             accumulator.reset(),
             join(content()).using(fold()).min(1),
-            end(),
-            push(accumulator.build())
+            push(accumulator.build()),
+            end()
         );
     }
 

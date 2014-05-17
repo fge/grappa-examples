@@ -3,51 +3,87 @@ package com.github.parboiled1.grappa.vcard.values;
 import com.github.parboiled1.grappa.helpers.ValueBuilder;
 import ezvcard.VCardDataType;
 import ezvcard.VCardVersion;
+import ezvcard.io.scribe.RawPropertyScribe;
 import ezvcard.io.scribe.ScribeIndex;
 import ezvcard.io.scribe.VCardPropertyScribe;
 import ezvcard.parameter.VCardParameters;
 import ezvcard.property.VCardProperty;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Untainted;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public final class VCardPropertyBuilder
     implements ValueBuilder<VCardProperty>
 {
-    private final ScribeIndex index = new ScribeIndex();
-
-    private VCardProperty property;
-    private VCardPropertyScribe<? extends VCardProperty> scribe;
-    private VCardDataType dataType;
+    /*
+     * The vCard version
+     */
     private VCardVersion version = VCardVersion.V2_1;
 
+    /*
+     * Index of vCard property scribes
+     */
+    private final ScribeIndex index = new ScribeIndex();
+
+    /*
+     * The property scribe
+     */
+    private VCardPropertyScribe<? extends VCardProperty> scribe;
+
+    /*
+     * The generated property
+     */
+    private VCardProperty property;
+
+
+    // Unused at the moment
+    private VCardParameters parameters = new VCardParameters();
+
+    // vCard property value type
+    private VCardDataType dataType;
+
     // Called before .setName()
-    public boolean setVersion(@Untainted @Nonnull final String version)
+    public boolean setVersion(final VCardVersion version)
     {
-        this.version = VCardVersion.valueOfByStr(version);
+        this.version = version;
         return true;
     }
 
-    public boolean setName(@Untainted @Nonnull final String name)
+    // A name or an extended name
+    public boolean setName(final String name)
     {
-        scribe = index.getPropertyScribe(name.toUpperCase());
+        scribe = index.getPropertyScribe(name);
         if (scribe == null)
-            return false;
+            scribe = new RawPropertyScribe(name);
+
         dataType = scribe.defaultDataType(version);
         return true;
     }
 
     // Called after .setName()
-    public boolean setValue(@Untainted @Nonnull final String value)
+    public boolean setValue(final String value)
     {
-        property = scribe.parseText(value, dataType, version,
-            new VCardParameters()).getProperty();
+        /*
+         * Use the below when parameters are accounted for
+         */
+        /*
+        String valueParam = parameters.getValue();
+        VCardDataType dataType;
+        if (valueParam == null) {
+            dataType = scribe.defaultDataType(version);
+        } else {
+            dataType = VCardDataType.get(valueParam);
+            parameters.removeValue();
+        }
+        */
+        property = scribe.parseText(value, dataType, version, parameters)
+            .getProperty();
         return true;
     }
 
     // Name is always set here
-    public VCardPropertyBuilder withValue(
-        @Untainted @Nonnull final String value)
+    public VCardPropertyBuilder withValue(final String value)
     {
         setValue(value);
         return this;
@@ -77,9 +113,14 @@ public final class VCardPropertyBuilder
     @Override
     public boolean reset()
     {
-        property = null;
+        /*
+         * Do NOT reset version here
+         */
         scribe = null;
+        parameters = new VCardParameters();
         dataType = null;
+        property = null;
+
         return true;
     }
 }

@@ -48,17 +48,20 @@ public class VcardParser
     {
         return sequence(
             "VERSION:", trie(VCARD_VERSIONS),
-            buildEvent(versionBuilder.withVersion(match()))
+            versionBuilder.setVersion(match()),
+            propertyBuilder.setVersion(versionBuilder.build()),
+            buildEvent(versionBuilder)
         );
     }
 
     Rule property()
     {
         return sequence(
-            testNot(endVcard()),
-            oneOrMore(charRange('A', 'Z')), push(match()),
+            testNot(endVcard()), propertyBuilder.reset(),
+            oneOrMore(charRange('A', 'Z')), propertyBuilder.setName(match()),
             ':',
-            regularValue.value(), fireEvent("value")
+            regularValue.value(), propertyBuilder.setValue(pop()),
+            buildEvent(propertyBuilder)
         );
     }
 
@@ -80,12 +83,6 @@ public class VcardParser
     Rule endVcard()
     {
         return string("END:VCARD");
-    }
-
-    Rule geoNumber()
-    {
-        // TODO: create a repeat(...).{times,min,max}()
-        return sequence(oneOrMore(digit()), '.', nTimes(6, digit()));
     }
 }
 
