@@ -4,8 +4,8 @@ version = "1.0.0-beta.1-SNAPSHOT";
 
 project.ext {
     description = "Sample grammars for Grappa";
-    sourceCompatibility = "1.6";
-    targetCompatibility = "1.6"; // defaults to sourceCompatibility
+    sourceCompatibility = "1.7";
+    targetCompatibility = "1.7"; // defaults to sourceCompatibility
 };
 
 buildscript {
@@ -39,6 +39,7 @@ repositories {
 dependencies {
     compile(group: "com.github.parboiled1", name: "grappa",
         version: "1.0.0-beta.9");
+    compile(group: "com.github.fge", name: "largetext", version: "0.2.0");
     compile(group: "com.googlecode.ez-vcard", name: "ez-vcard",
         version: "0.9.3");
     provided(group: "com.google.code.findbugs", name: "jsr305",

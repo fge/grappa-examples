@@ -22,6 +22,11 @@ public class VcardParser
         VCARD_VERSIONS = builder.build();
     }
 
+    VcardParser()
+    {
+        addEvent("version", VcardVersionEvent.class);
+    }
+
     private final VcardValueParser quotedPrintableValue
         = Parboiled.createParser(QuotedPrintableValueParser.class);
     private final VcardValueParser regularValue
