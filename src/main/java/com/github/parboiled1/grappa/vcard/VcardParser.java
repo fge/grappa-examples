@@ -27,16 +27,10 @@ public class VcardParser
         VCARD_VERSIONS = builder.build();
     }
 
-    protected final VcardVersionBuilder versionBuilder
+    protected final VcardVersionBuilder version
         = new VcardVersionBuilder();
-    protected final VCardPropertyBuilder propertyBuilder
+    protected final VCardPropertyBuilder property
         = new VCardPropertyBuilder();
-
-    VcardParser()
-    {
-        addEvent("version", VcardVersionEvent.class);
-        addEvent("value", VcardValueEvent.class);
-    }
 
     protected final VcardValueParser quotedPrintableValue
         = Parboiled.createParser(QuotedPrintableValueParser.class);
@@ -45,24 +39,23 @@ public class VcardParser
     protected final VcardValueParser valueParser = regularValue;
 
 
-    Rule version()
+    Rule versionLine()
     {
         return sequence(
             "VERSION:", trie(VCARD_VERSIONS),
-            versionBuilder.setVersion(match()),
-            propertyBuilder.setVersion(versionBuilder.build()),
-            buildEvent(versionBuilder)
+            version.setVersion(match()), property.setVersion(version.build()),
+            buildEvent(version)
         );
     }
 
-    Rule property()
+    Rule propertyLine()
     {
         return sequence(
-            testNot(endVcard()), propertyBuilder.reset(),
-            propertyName(), propertyBuilder.setName(match()),
+            testNot(endVcard()), property.reset(),
+            propertyName(), property.setName(match()),
             ':',
-            valueParser.value(), propertyBuilder.setValue(pop()),
-            buildEvent(propertyBuilder)
+            valueParser.value(), property.setValue(pop()),
+            buildEvent(property)
         );
     }
 
@@ -76,8 +69,8 @@ public class VcardParser
     {
         return sequence(
             beginVcard(),
-            version(), crlf(),
-            oneOrMore(property()),
+            versionLine(), crlf(),
+            oneOrMore(propertyLine()),
             endVcard()
         );
     }
