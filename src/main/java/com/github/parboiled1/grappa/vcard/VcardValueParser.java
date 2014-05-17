@@ -2,76 +2,25 @@ package com.github.parboiled1.grappa.vcard;
 
 import com.github.parboiled1.grappa.event.EventBusParser;
 import org.parboiled.Rule;
-import org.parboiled.support.StringBuilderVar;
 
-public class VcardValueParser
+public abstract class VcardValueParser
     extends EventBusParser<String>
 {
-    private final StringBuilderVar sb = new StringBuilderVar();
+    protected final StringAccumulator accumulator = new StringAccumulator();
 
-
-    public Rule value(final boolean quotedPrintable)
-    {
-        final Rule special = quotedPrintable ? quotedPrintableLineSeparator()
-            : nonQuotedPrintableLineSeparator();
-        final Rule normal
-            = oneOrMore(testNot(special), ANY, sb.append(match()));
-
-        sb.clear();
-        return
-            join(normal).using(special).min(1);
-    }
-
-    /*
-     * Quoted printable
-     */
-    protected Rule quotedPrintableLineSeparator()
-    {
-        return sequence("=0D=0A", crlf());
-    }
-
-    protected Rule quotedPrintableEOI()
-    {
-        return string("=\r\n");
-    }
-
-    protected Rule quotedPrintableContent()
-    {
-        return sequence(oneOrMore(noneOf("=")), sb.append(match()));
-    }
-
-    protected Rule quotedPrintableFull()
+    public Rule value()
     {
         return sequence(
-            join(quotedPrintableContent())
-                .using(quotedPrintableLineSeparator())
-                .min(1),
-            quotedPrintableEOI()
+            accumulator.clear(),
+            join(normal()).using(fold()).min(1),
+            end(),
+            push(accumulator.get())
         );
     }
 
-    /*
-     * Not quoted printable
-     */
-    protected Rule nonQuotedPrintableLineSeparator()
-    {
-        return sequence(crlf(), oneOrMore(wsp()));
-    }
+    protected abstract Rule normal();
 
-    protected Rule nonQuotedPrintableContent()
-    {
-        return sequence(oneOrMore(noneOf("\r"), ANY), sb.append(match()));
-    }
+    protected abstract Rule fold();
 
-    protected Rule nonQuotedPrintableFull()
-    {
-        return join(nonQuotedPrintableContent())
-            .using(nonQuotedPrintableLineSeparator())
-            .min(1);
-    }
-
-    public String getValue()
-    {
-        return sb.get().toString();
-    }
+    protected abstract Rule end();
 }

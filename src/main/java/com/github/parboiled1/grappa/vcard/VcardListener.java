@@ -1,6 +1,5 @@
 package com.github.parboiled1.grappa.vcard;
 
-import com.github.parboiled1.grappa.event.BasicMatchEvent;
 import com.google.common.eventbus.Subscribe;
 import ezvcard.VCard;
 
@@ -14,7 +13,8 @@ public final class VcardListener
     }
 
     @Subscribe
-    public void foo(final BasicMatchEvent<String> event)
+    public void versionEvent(final VcardVersionEvent event)
     {
+        vCard.setVersion(event.getVersion());
     }
 }
