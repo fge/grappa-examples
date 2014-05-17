@@ -42,6 +42,7 @@ public class VcardParser
         = Parboiled.createParser(QuotedPrintableValueParser.class);
     protected final VcardValueParser regularValue
         = Parboiled.createParser(RegularValueParser.class);
+    protected final VcardValueParser valueParser = regularValue;
 
 
     Rule version()
@@ -58,11 +59,17 @@ public class VcardParser
     {
         return sequence(
             testNot(endVcard()), propertyBuilder.reset(),
-            oneOrMore(charRange('A', 'Z')), propertyBuilder.setName(match()),
+            propertyName(), propertyBuilder.setName(match()),
             ':',
-            regularValue.value(), propertyBuilder.setValue(pop()),
+            valueParser.value(), propertyBuilder.setValue(pop()),
             buildEvent(propertyBuilder)
         );
+    }
+
+    // A regular name or an "X-" name
+    Rule propertyName()
+    {
+        return sequence(optional(ignoreCase("x-")), oneOrMore(alpha()));
     }
 
     Rule vcard()
