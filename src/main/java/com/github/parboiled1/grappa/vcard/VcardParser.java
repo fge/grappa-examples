@@ -1,6 +1,8 @@
 package com.github.parboiled1.grappa.vcard;
 
 import com.github.parboiled1.grappa.event.EventBusParser;
+import com.github.parboiled1.grappa.vcard.values.VCardPropertyBuilder;
+import com.github.parboiled1.grappa.vcard.values.VcardVersionBuilder;
 import com.google.common.collect.ImmutableList;
 import ezvcard.VCardVersion;
 import org.parboiled.Parboiled;
@@ -25,6 +27,11 @@ public class VcardParser
         VCARD_VERSIONS = builder.build();
     }
 
+    protected final VcardVersionBuilder versionBuilder
+        = new VcardVersionBuilder();
+    protected final VCardPropertyBuilder propertyBuilder
+        = new VCardPropertyBuilder();
+
     VcardParser()
     {
         addEvent("version", VcardVersionEvent.class);
@@ -39,7 +46,10 @@ public class VcardParser
 
     Rule version()
     {
-        return sequence("VERSION:", trie(VCARD_VERSIONS), fireEvent("version"));
+        return sequence(
+            "VERSION:", trie(VCARD_VERSIONS),
+            buildEvent(versionBuilder.withVersion(match()))
+        );
     }
 
     Rule property()

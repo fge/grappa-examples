@@ -1,17 +1,17 @@
-package com.github.parboiled1.grappa.vcard;
+package com.github.parboiled1.grappa.vcard.values;
 
-import org.parboiled.support.Var;
+import com.github.parboiled1.grappa.helpers.ValueBuilder;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public final class StringAccumulator
-    extends Var<String>
+    implements ValueBuilder<String>
 {
     @SuppressWarnings("StringBufferField")
-    private final StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder();
 
-    public boolean append(final char c)
+    public boolean appendChar(final char c)
     {
         sb.append(c);
         return true;
@@ -24,14 +24,14 @@ public final class StringAccumulator
     }
 
     @Override
-    public boolean clear()
+    public boolean reset()
     {
-        sb.delete(0, sb.length());
+        sb = new StringBuilder();
         return true;
     }
 
     @Override
-    public String get()
+    public String build()
     {
         return sb.toString();
     }

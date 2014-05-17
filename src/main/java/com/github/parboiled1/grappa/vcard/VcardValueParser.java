@@ -1,6 +1,7 @@
 package com.github.parboiled1.grappa.vcard;
 
 import com.github.parboiled1.grappa.event.EventBusParser;
+import com.github.parboiled1.grappa.vcard.values.StringAccumulator;
 import org.parboiled.Rule;
 
 public abstract class VcardValueParser
@@ -11,10 +12,10 @@ public abstract class VcardValueParser
     public Rule value()
     {
         return sequence(
-            accumulator.clear(),
+            accumulator.reset(),
             join(content()).using(fold()).min(1),
             end(),
-            push(accumulator.get())
+            push(accumulator.build())
         );
     }
 
