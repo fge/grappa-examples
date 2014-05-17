@@ -1,7 +1,11 @@
 package com.github.parboiled1.grappa.vcard.values;
 
 import com.github.parboiled1.grappa.helpers.ValueBuilder;
-import com.google.common.base.Preconditions;
+import ezvcard.VCardDataType;
+import ezvcard.VCardVersion;
+import ezvcard.io.scribe.ScribeIndex;
+import ezvcard.io.scribe.VCardPropertyScribe;
+import ezvcard.parameter.VCardParameters;
 import ezvcard.property.VCardProperty;
 
 import javax.annotation.Nonnull;
@@ -10,15 +14,45 @@ import javax.annotation.Untainted;
 public final class VCardPropertyBuilder
     implements ValueBuilder<VCardProperty>
 {
-    private VCardProperty property;
-    private String propertyName;
+    private final ScribeIndex index = new ScribeIndex();
 
-    public boolean setPropertyName(
-        @Untainted @Nonnull final String propertyName)
+    private VCardProperty property;
+    private VCardPropertyScribe<? extends VCardProperty> scribe;
+    private VCardDataType dataType;
+    private VCardVersion version = VCardVersion.V2_1;
+
+    // Called before .setName()
+    public boolean setVersion(@Untainted @Nonnull final String version)
     {
-        this.propertyName = Preconditions.checkNotNull(propertyName);
+        this.version = VCardVersion.valueOfByStr(version);
         return true;
     }
+
+    public boolean setName(@Untainted @Nonnull final String name)
+    {
+        scribe = index.getPropertyScribe(name.toUpperCase());
+        if (scribe == null)
+            return false;
+        dataType = scribe.defaultDataType(version);
+        return true;
+    }
+
+    // Called after .setName()
+    public boolean setValue(@Untainted @Nonnull final String value)
+    {
+        property = scribe.parseText(value, dataType, version,
+            new VCardParameters()).getProperty();
+        return true;
+    }
+
+    // Name is always set here
+    public VCardPropertyBuilder withValue(
+        @Untainted @Nonnull final String value)
+    {
+        setValue(value);
+        return this;
+    }
+
     /**
      * Build the value
      *
@@ -28,7 +62,7 @@ public final class VCardPropertyBuilder
     @Override
     public VCardProperty build()
     {
-        return null;
+        return property;
     }
 
     /**
@@ -43,6 +77,9 @@ public final class VCardPropertyBuilder
     @Override
     public boolean reset()
     {
-        return false;
+        property = null;
+        scribe = null;
+        dataType = null;
+        return true;
     }
 }

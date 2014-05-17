@@ -21,18 +21,4 @@ public final class VcardListener
     {
         vCard.setVersion(version);
     }
-
-    @Subscribe
-    public void versionEvent(final VcardVersionEvent event)
-    {
-        vCard.setVersion(event.getVersion());
-    }
-
-    @Subscribe
-    public void valueEvent(final VcardValueEvent event)
-    {
-        final String name = event.getPropertyName();
-        if ("FN".equals(name))
-            vCard.setFormattedName(event.getMatch());
-    }
 }
