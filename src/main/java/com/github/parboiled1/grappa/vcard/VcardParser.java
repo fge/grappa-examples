@@ -77,12 +77,12 @@ public class VcardParser
 
     Rule beginVcard()
     {
-        return string("BEGIN:VCARD\r\n");
+        return ignoreCase("BEGIN:VCARD\r\n");
     }
 
     Rule endVcard()
     {
-        return string("END:VCARD");
+        return ignoreCase("END:VCARD");
     }
 }
 
