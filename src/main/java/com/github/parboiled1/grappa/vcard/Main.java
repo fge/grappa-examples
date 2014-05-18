@@ -19,7 +19,7 @@ public final class Main
         final ParseRunner<Object> runner
             = new TracingParseRunner<>(parser.vcard());
 
-        parser.addListener(listener);
+        parser.register(listener);
 
         try (
             final InputStream in

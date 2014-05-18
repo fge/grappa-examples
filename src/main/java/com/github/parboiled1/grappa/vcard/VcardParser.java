@@ -44,7 +44,7 @@ public class VcardParser
         return sequence(
             "VERSION:", trie(VCARD_VERSIONS),
             version.setVersion(match()), property.setVersion(version.build()),
-            buildEvent(version)
+            post(version)
         );
     }
 
@@ -55,7 +55,7 @@ public class VcardParser
             propertyName(), property.setName(match()),
             ':',
             valueParser.value(), property.setValue(pop()),
-            buildEvent(property)
+            post(property)
         );
     }
 
