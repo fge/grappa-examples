@@ -1,8 +1,8 @@
 package com.github.parboiled1.grappa.quotedstring.stack;
 
 import org.parboiled.Parboiled;
-import org.parboiled.parserunners.BasicParseRunner;
 import org.parboiled.parserunners.ParseRunner;
+import org.parboiled.parserunners.ReportingParseRunner;
 import org.parboiled.support.ParsingResult;
 
 import java.util.Scanner;
@@ -14,8 +14,7 @@ public final class StackExample
         final StackStringParser parser
             = Parboiled.createParser(StackStringParser.class);
 
-        final ParseRunner<String> runner
-            = new BasicParseRunner<>(parser.rule());
+        ParseRunner<String> runner;
 
         final Scanner scanner = new Scanner(System.in);
 
@@ -27,6 +26,7 @@ public final class StackExample
             input = scanner.nextLine();
             if (input.isEmpty())
                 break;
+            runner = new ReportingParseRunner<>(parser.rule());
             result = runner.run(input);
             if (result.hasErrors()) {
                 System.out.println("Invalid input!");

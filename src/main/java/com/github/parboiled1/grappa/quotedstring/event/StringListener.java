@@ -8,29 +8,22 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class StringListener
 {
-    @SuppressWarnings("StringBufferField")
-    private final StringBuilder sb = new StringBuilder();
+    private String value;
 
     @Subscribe
-    public void appendString(final String s)
+    public void setValue(final String value)
     {
-        sb.append(s);
-    }
-
-    @Subscribe
-    public void appendChar(final Character c)
-    {
-        sb.append(c);
+        this.value = value;
     }
 
     public void reset()
     {
-        sb.setLength(0);
+        value = null;
     }
 
     @Nullable
     public String getValue()
     {
-        return sb.toString();
+        return value;
     }
 }

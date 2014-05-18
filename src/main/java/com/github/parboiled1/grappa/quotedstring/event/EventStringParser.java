@@ -1,6 +1,7 @@
 package com.github.parboiled1.grappa.quotedstring.event;
 
 import com.github.parboiled1.grappa.event.EventBusParser;
+import com.github.parboiled1.grappa.quotedstring.stack.StringAccumulator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import org.parboiled.Rule;
@@ -24,14 +25,18 @@ public class EventStringParser
         SPECIAL_ESCAPES = builder.build();
     }
 
+    protected final StringAccumulator accumulator = new StringAccumulator();
+
     Rule escaped()
     {
-        return sequence('\\', ANY, postRaw(escapeChar(matchedChar())));
+        return sequence('\\', ANY,
+            accumulator.appendChar(escapeChar(matchedChar())));
     }
 
     Rule unescaped()
     {
-        return sequence(zeroOrMore(noneOf("\\\"")), postRaw(match()));
+        return sequence(zeroOrMore(noneOf("\\\"")),
+            accumulator.append(match()));
     }
 
     Rule content()
@@ -41,7 +46,8 @@ public class EventStringParser
 
     public Rule rule()
     {
-        return sequence('"', content(), '"');
+        return sequence('"', accumulator.reset(), content(),
+            post(accumulator), '"');
     }
 
     protected final char escapeChar(final char c)

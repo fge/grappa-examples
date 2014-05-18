@@ -17,8 +17,7 @@ public final class EventExample
         final StringListener listener = new StringListener();
         parser.register(listener);
 
-        final ParseRunner<Object> runner
-            = new ReportingParseRunner<>(parser.rule());
+        ParseRunner<Object> runner;
 
         final Scanner scanner = new Scanner(System.in);
 
@@ -31,6 +30,7 @@ public final class EventExample
             if (input.isEmpty())
                 break;
             listener.reset();
+            runner = new ReportingParseRunner<>(parser.rule());
             result = runner.run(input);
             if (result.hasErrors()) {
                 System.out.println("Invalid input!");
