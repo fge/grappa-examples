@@ -1,4 +1,4 @@
-package com.github.parboiled1.grappa.vcard.values;
+package com.github.parboiled1.grappa.quotedstring.stack;
 
 import com.github.parboiled1.grappa.helpers.ValueBuilder;
 

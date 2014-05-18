@@ -1,7 +1,7 @@
 package com.github.parboiled1.grappa.vcard;
 
 import com.github.parboiled1.grappa.event.EventBusParser;
-import com.github.parboiled1.grappa.vcard.values.StringAccumulator;
+import com.github.parboiled1.grappa.quotedstring.stack.StringAccumulator;
 import org.parboiled.Rule;
 
 public abstract class VcardValueParser
