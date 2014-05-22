@@ -1,6 +1,6 @@
 package com.github.parboiled1.grappa.quotedstring.event;
 
-import com.github.parboiled1.grappa.event.EventBusParser;
+import com.github.parboiled1.grappa.parsers.EventBusParser;
 import com.github.parboiled1.grappa.quotedstring.stack.StringAccumulator;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
