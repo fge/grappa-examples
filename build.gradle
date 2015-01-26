@@ -1,22 +1,30 @@
-
-group = "com.github.parboiled1";
-version = "1.0.0-beta.1-SNAPSHOT";
-
-project.ext {
-    description = "Sample grammars for Grappa";
-    sourceCompatibility = "1.7";
-    targetCompatibility = "1.7"; // defaults to sourceCompatibility
-};
-
 buildscript {
     repositories {
-        maven { url "http://repo.springsource.org/plugins-release" }
-        maven { url "http://repo.springsource.org/plugins-snapshot" }
+        maven { url "http://repo.spring.io/plugins-release" };
     }
     dependencies {
-        classpath("org.springframework.build.gradle:propdeps-plugin:0.0.6-SNAPSHOT")
+        classpath(group: "org.springframework.build.gradle",
+            name: "propdeps-plugin", version: "0.0.7");
     }
 }
+
+apply(plugin: "java");
+apply(plugin: "maven");
+apply(plugin: "signing");
+apply(plugin: "idea");
+apply(plugin: "eclipse");
+apply(plugin: "propdeps");
+apply(plugin: "propdeps-maven");
+apply(plugin: "propdeps-idea");
+apply(plugin: "propdeps-eclipse");
+
+group = "com.github.parboiled1";
+version = "1.0.0-SNAPSHOT";
+description = "Sample grammars for Grappa";
+
+def javaVersion = JavaVersion.VERSION_1_7;
+sourceCompatibility = javaVersion;
+targetCompatibility = javaVersion; // defaults to sourceCompatibility
 
 apply(plugin: "java");
 apply(plugin: "maven");
@@ -32,38 +40,32 @@ apply(plugin: "propdeps-eclipse");
 
 repositories {
     mavenCentral();
-    mavenLocal();
-    jcenter();
 }
 
 dependencies {
-    compile(group: "com.github.parboiled1", name: "grappa",
-        version: "1.0.0-beta.10-SNAPSHOT");
+    compile(group: "com.github.fge", name: "grappa-tracer-backport",
+        version: "1.1.0");
     compile(group: "com.github.fge", name: "largetext", version: "0.2.0");
     compile(group: "com.googlecode.ez-vcard", name: "ez-vcard",
-        version: "0.9.3");
+        version: "0.9.4");
     provided(group: "com.google.code.findbugs", name: "jsr305",
-        version: "2.0.1");
-    testCompile(group: "org.testng", name: "testng", version: "6.8.7") {
-        exclude(group: "junit", module: "junit");
-        exclude(group: "org.beanshell", module: "bsh");
-        exclude(group: "org.yaml", module: "snakeyaml");
-    };
-    testCompile(group: "org.mockito", name: "mockito-core", version: "1.9.5");
-    testCompile(group: "org.assertj", name: "assertj-core", version: "1.6.0");
+        version: "3.0.0");
 }
 
 javadoc.options.links("http://docs.oracle.com/javase/6/docs/api/");
 javadoc.options.links("http://jsr-305.googlecode.com/svn/trunk/javadoc/");
 javadoc.options.links("http://asm.ow2.org/asm40/javadoc/user/");
-javadoc.options.links("http://docs.guava-libraries.googlecode.com/git-history/v17.0/javadoc/");
-javadoc.options.links("http://parboiled1.github.io/grappa/");
+javadoc.options.links("http://docs.guava-libraries.googlecode.com/git-history/v18.0/javadoc/");
+javadoc.options.links("http://fge.github.io/grappa/");
 
-test {
-    useTestNG() {
-        useDefaultListeners = true;
-    };
+task enforceVersion << {
+    def foundVersion = JavaVersion.current();
+    if (foundVersion != javaVersion)
+        throw new IllegalStateException("Wrong Java version; required is "
+            + javaVersion + ", but found " + foundVersion);
 }
+
+compileJava.dependsOn(enforceVersion);
 
 /*
  * Necessary to generate the source and javadoc jars
@@ -94,7 +96,7 @@ artifacts {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "1.11";
+    gradleVersion = "2.2.1";
     distributionUrl = "http://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip";
 }
 
