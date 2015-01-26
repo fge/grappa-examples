@@ -146,13 +146,8 @@ public class RFC2425Section584Parser
             booleanValue(),
             integerList(),
             floatList(),
-            genericUrl(),
+            urlParser.genericUrl(),
             textList()
         );
-    }
-
-    private Rule genericUrl()
-    {
-        return EMPTY;
     }
 }
